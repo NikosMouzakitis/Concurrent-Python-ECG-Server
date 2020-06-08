@@ -1,11 +1,12 @@
 import socket
 import struct
 import numpy as np
+import ecg_plot as ep
 import matplotlib.pyplot as plt
 from scipy import signal, misc
 from scipy.fftpack import fft, ifft, fftfreq
 
-SAMPLES = 50
+SAMPLES = 100
 # data domain
 t1 = np.zeros([SAMPLES,1])
 #init time domain
@@ -20,9 +21,11 @@ s = socket.socket()
 host = socket.gethostname()
 port = 58111
 print("Connecting to ECG server")
+
 s.connect((host, port))
 
 while(True):
+
 	run = 0
 	print("Received from server:\n")
 	data_batch = s.recv(1024)
@@ -41,7 +44,9 @@ while(True):
 	print(s1)
 	#plot
 	plt.plot(t1, s1)
+	plt.grid(color='r', linestyle='-', linewidth=0.5)	
 	axes = plt.gca()
+	axes.set_facecolor((0.9, 0.88, 0.75))
 	axes.set_ylim([-1,1.2])
 	plt.rcParams['figure.figsize'] = [10 ,4]
 	plt.title('ECG Signal received from Server')
@@ -51,6 +56,4 @@ while(True):
 	plt.cla()
 plt.show()
 
-
-s.close()
-
+	

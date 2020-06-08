@@ -10,6 +10,7 @@ print("ECG server is powered on\n")
 ecg = pd.read_csv("../sample_data/samples.csv")
 print("read sample data\n")
 
+SAMPLES = 100
 # t is the time dimension
 t = ecg.iloc[:,0]  
 # s is the actual signal value
@@ -30,9 +31,9 @@ print("Connection from: ", addr)
 	
 while(True):
 	print("Sending batch")
-#send the first 50 samples, that define 2 second in the given dataset.	
+#send the first 100 samples, that define 2 second in the given dataset.	
 	to_send=b""	
-	for i in range(0,50):
+	for i in range(0,100):
 		print("adding sample: ",signal[counter_signal])
 		b = struct.pack('d',signal[counter_signal])
 		to_send+=b
