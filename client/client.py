@@ -25,7 +25,6 @@ print("Connecting to ECG server")
 s.connect((host, port))
 
 while(True):
-
 	run = 0
 	print("Received from server:\n")
 	data_batch = s.recv(1024)

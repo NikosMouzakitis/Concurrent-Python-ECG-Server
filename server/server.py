@@ -6,39 +6,62 @@ from scipy.fftpack import fft, ifft, fftfreq
 import socket
 import struct #pack in double to send over network
 import time
-print("ECG server is powered on\n")
-ecg = pd.read_csv("../sample_data/samples.csv")
-print("read sample data\n")
+import threading
 
 SAMPLES = 100
-# t is the time dimension
-t = ecg.iloc[:,0]  
-# s is the actual signal value
-signal = ecg.iloc[:,1]   
-dt = t[1] - t[0]
 
-counter_signal = 0
+class ClientThread(threading.Thread):
+	def __init__(self, clientAddress, clientsocket):
+		threading.Thread.__init__(self)
+		self.csocket = clientsocket
+		print("new connection added: ", clientAddress)
+
+	def run(self):
+
+		ecg = pd.read_csv("../sample_data/samples.csv")
+		# t is the time dimension
+		t = ecg.iloc[:,0]  
+		# s is the actual signal value
+		signal = ecg.iloc[:,1]   
+		counter_signal = 0
+		
+		while(True):
+			print("Sending batch")
+			#send the first 100 samples, that define 2 second in the given dataset.	
+			to_send=b""	
+			
+			for i in range(0,100):
+				print("adding sample: ",signal[counter_signal])
+				b = struct.pack('d',signal[counter_signal])
+				to_send+=b
+				counter_signal+=1
+
+			sended=con.send(to_send)
+			time.sleep(1)	# sleep 1 second
+
+##########################################################################
+##########################################################################
+##########################################################################
+#		Multithreaded server program				 #
+#		Mouzakitis Nikolaos, Grenoble 2020.			 #
+#									 #
+##########################################################################
+##########################################################################
+##########################################################################
+
+print("ECG server is powered on\n")
+print("read sample data\n")
 
 s = socket.socket()
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 host = socket.gethostname()
 port = 58111
-
 s.bind((host, port))
-s.listen(5)
-
-con, addr = s.accept()
-print("Connection from: ", addr)
 	
 while(True):
-	print("Sending batch")
-#send the first 100 samples, that define 2 second in the given dataset.	
-	to_send=b""	
-	for i in range(0,100):
-		print("adding sample: ",signal[counter_signal])
-		b = struct.pack('d',signal[counter_signal])
-		to_send+=b
-		counter_signal+=1
+	s.listen(1)
 
-	sended=con.send(to_send)
-	time.sleep(1)	# sleep 1 second
+	con, addr = s.accept()
+	newthread = ClientThread(addr, con)	
+	newthread.start()
 
