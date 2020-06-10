@@ -16,7 +16,7 @@ class ClientThread(threading.Thread):
 
 	def run(self):
 		
-		ecg = pd.read_csv("../sample_data/samples.csv")
+		ecg = pd.read_csv("../sample/samples.csv")
 		# t is the time dimension
 		t = ecg.iloc[:,0]  
 		# s is the actual signal value
