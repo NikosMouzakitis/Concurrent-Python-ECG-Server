@@ -56,7 +56,7 @@ s = socket.socket()
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 host = socket.gethostname()
 port = 58111
-s.bind((host, port))
+s.bind(('', port))
 	
 while(True):
 	s.listen(5)
