@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy import signal, misc 
-from scipy.fftpack import fft, ifft, fftfreq
 import socket
 import struct #pack in double to send over network
 import time
@@ -17,15 +15,17 @@ class ClientThread(threading.Thread):
 		print("new connection added: ", clientAddress)
 
 	def run(self):
-
+		
 		ecg = pd.read_csv("../sample_data/samples.csv")
 		# t is the time dimension
 		t = ecg.iloc[:,0]  
 		# s is the actual signal value
 		signal = ecg.iloc[:,1]   
 		counter_signal = 0
+		cs = con
 		
 		while(True):
+			print(self)
 			print("Sending batch")
 			#send the first 100 samples, that define 2 second in the given dataset.	
 			to_send=b""	
@@ -59,9 +59,9 @@ port = 58111
 s.bind((host, port))
 	
 while(True):
-	s.listen(1)
+	s.listen(5)
 
-	con, addr = s.accept()
-	newthread = ClientThread(addr, con)	
+	(con, (addr,port)) = s.accept()
+	newthread = ClientThread(addr, port)	
 	newthread.start()
 
