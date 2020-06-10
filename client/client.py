@@ -1,11 +1,9 @@
+import ipaddress
 import socket
 import struct
 import numpy as np
 import ecg_plot as ep
 import matplotlib.pyplot as plt
-from scipy import signal, misc
-from scipy.fftpack import fft, ifft, fftfreq
-
 SAMPLES = 100
 # data domain
 t1 = np.zeros([SAMPLES,1])
@@ -18,9 +16,11 @@ for i in range(0,SAMPLES):
 
 s1 = np.zeros([SAMPLES, 1])
 s = socket.socket()
-host = socket.gethostname()
+host = str(ipaddress.ip_address(b'\xC0\xA8\x2B\xDA'))
 port = 58111
 print("Connecting to ECG server")
+print(host)
+print(port)
 
 s.connect((host, port))
 
